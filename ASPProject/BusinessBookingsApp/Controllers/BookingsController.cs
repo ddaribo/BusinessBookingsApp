@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
+using BusinessBookingsApp.Models.ViewModels;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -24,14 +25,16 @@ namespace BusinessBookingsApp.Controllers
 
         // GET: api/Bookings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        public async Task<ActionResult<IEnumerable<BookingViewModel>>> GetBookings()
         {
-            return await _context.Bookings.ToListAsync();
+            return await _context.Bookings
+                .Select(x => BookingItemToVM(x))
+                .ToListAsync();
         }
 
         // GET: api/Bookings/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(int id)
+        public async Task<ActionResult<BookingViewModel>> GetBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
 
@@ -40,20 +43,19 @@ namespace BusinessBookingsApp.Controllers
                 return NotFound();
             }
 
-            return booking;
+            return BookingItemToVM(booking);
         }
 
         // PUT: api/Bookings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
+        public async Task<IActionResult> PutBooking(int id, BookingViewModel bookingVM)
         {
-            if (id != booking.BookingId)
+            if (id != bookingVM.BookingId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            _context.Entry(bookingVM).State = EntityState.Modified;
 
             try
             {
@@ -75,14 +77,21 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // POST: api/Bookings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<BookingViewModel>> PostBooking(BookingViewModel bookingVM)
         {
-            _context.Bookings.Add(booking);
+            var bookingItem = new Booking
+            {
+                BookingId = bookingVM.BookingId,
+                BusinessId = bookingVM.BusinessId,
+                ApplicationUser = bookingVM.ApplicationUser,
+                Date = bookingVM.Date,
+                Time = bookingVM.Time,
+            };
+            _context.Bookings.Add(bookingItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBooking", new { id = booking.BookingId }, booking);
+            return CreatedAtAction("GetBooking", new { id = bookingItem.BookingId }, BookingItemToVM(bookingItem));
         }
 
         // DELETE: api/Bookings/5
@@ -105,5 +114,15 @@ namespace BusinessBookingsApp.Controllers
         {
             return _context.Bookings.Any(e => e.BookingId == id);
         }
+
+        private static BookingViewModel BookingItemToVM(Booking booking) =>
+          new BookingViewModel
+          {
+              BookingId = booking.BookingId,
+              BusinessId = booking.BusinessId,
+              ApplicationUser = booking.ApplicationUser,
+              Date = booking.Date,
+              Time = booking.Time,
+          };
     }
 }

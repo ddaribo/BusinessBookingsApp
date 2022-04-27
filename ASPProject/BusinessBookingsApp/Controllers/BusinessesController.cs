@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
+using BusinessBookingsApp.Models.ViewModels;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -24,14 +25,16 @@ namespace BusinessBookingsApp.Controllers
 
         // GET: api/Businesses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses()
+        public async Task<ActionResult<IEnumerable<BusinessViewModel>>> GetBusinesses()
         {
-            return await _context.Businesses.ToListAsync();
+            return await _context.Businesses
+                .Select(x => BusinessItemToVM(x))
+                .ToListAsync();
         }
 
         // GET: api/Businesses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Business>> GetBusiness(int id)
+        public async Task<ActionResult<BusinessViewModel>> GetBusiness(int id)
         {
             var business = await _context.Businesses.FindAsync(id);
 
@@ -40,20 +43,19 @@ namespace BusinessBookingsApp.Controllers
                 return NotFound();
             }
 
-            return business;
+            return BusinessItemToVM(business);
         }
 
         // PUT: api/Businesses/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBusiness(int id, Business business)
+        public async Task<IActionResult> PutBusiness(int id, BusinessViewModel businessVM)
         {
-            if (id != business.BusinessId)
+            if (id != businessVM.BusinessId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(business).State = EntityState.Modified;
+            _context.Entry(businessVM).State = EntityState.Modified;
 
             try
             {
@@ -75,14 +77,20 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // POST: api/Businesses
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Business>> PostBusiness(Business business)
+        public async Task<ActionResult<BusinessViewModel>> PostBusiness(BusinessViewModel businessVM)
         {
-            _context.Businesses.Add(business);
+            var businessItem = new Business
+            {
+                BusinessId = businessVM.BusinessId,
+                Name = businessVM.Name,
+                Address = businessVM.Address,
+            };
+            _context.Businesses.Add(businessItem);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBusiness", new { id = business.BusinessId }, business);
+            return CreatedAtAction("GetBusiness", new { id = businessItem.BusinessId }, BusinessItemToVM(businessItem));
         }
 
         // DELETE: api/Businesses/5
@@ -105,5 +113,15 @@ namespace BusinessBookingsApp.Controllers
         {
             return _context.Businesses.Any(e => e.BusinessId == id);
         }
+
+        private static BusinessViewModel BusinessItemToVM(Business business) =>
+           new BusinessViewModel
+           {
+               BusinessId = business.BusinessId,
+               Name = business.Name,
+               Address = business.Address,
+               Bookings = business.Bookings
+           };
     }
+
 }
