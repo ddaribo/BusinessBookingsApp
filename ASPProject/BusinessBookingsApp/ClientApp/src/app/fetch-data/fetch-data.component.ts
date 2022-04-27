@@ -9,7 +9,7 @@ export class FetchDataComponent {
   public businesses: Business[] = [];
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<Business[]>(baseUrl + 'business').subscribe(result => {
+    http.get<Business[]>(baseUrl + 'api/businesses').subscribe(result => {
       console.log(result);
       this.businesses = result;
     }, error => console.error(error));
