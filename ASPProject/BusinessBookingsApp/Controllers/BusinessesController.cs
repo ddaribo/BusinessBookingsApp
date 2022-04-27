@@ -114,7 +114,7 @@ namespace BusinessBookingsApp.Controllers
             return _context.Businesses.Any(e => e.BusinessId == id);
         }
 
-        private static BusinessViewModel BusinessItemToVM(Business business) =>
+        public static BusinessViewModel BusinessItemToVM(Business business) =>
            new BusinessViewModel
            {
                BusinessId = business.BusinessId,

@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
 using BusinessBookingsApp.Services;
+using System.ServiceModel;
+using SoapCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,9 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddSoapCore();
+builder.Services.TryAddScoped<BusinessService>();
 
 builder.Services.AddScoped<BusinessService>();
 
@@ -52,6 +58,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.UseSoapEndpoint<BusinessService>("/BusinessService.asmx", new SoapEncoderOptions(), SoapSerializer.DataContractSerializer);
+});
+
 app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");;
