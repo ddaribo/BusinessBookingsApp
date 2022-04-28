@@ -82,11 +82,9 @@ namespace BusinessBookingsApp.Controllers
         {
             var bookingItem = new Booking
             {
-                BookingId = bookingVM.BookingId,
                 BusinessId = bookingVM.BusinessId,
-                ApplicationUser = bookingVM.ApplicationUser,
-                Date = bookingVM.Date,
-                Time = bookingVM.Time,
+                BookingDateTime = bookingVM.BookingDateTime.ToLocalTime()
+
             };
             _context.Bookings.Add(bookingItem);
             await _context.SaveChangesAsync();
@@ -120,9 +118,7 @@ namespace BusinessBookingsApp.Controllers
           {
               BookingId = booking.BookingId,
               BusinessId = booking.BusinessId,
-              ApplicationUser = booking.ApplicationUser,
-              Date = booking.Date,
-              Time = booking.Time,
+              BookingDateTime = booking.BookingDateTime.ToLocalTime()
           };
     }
 }

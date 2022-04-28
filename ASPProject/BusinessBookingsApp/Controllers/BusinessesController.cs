@@ -120,7 +120,9 @@ namespace BusinessBookingsApp.Controllers
                BusinessId = business.BusinessId,
                Name = business.Name,
                Address = business.Address,
-               Bookings = business.Bookings
+               WorkHoursStart = business.WorkHoursStart,
+               WorkHoursEnd = business.WorkHoursEnd,
+               TimeSlotLength = business.TimeSlotLength,
            };
     }
 

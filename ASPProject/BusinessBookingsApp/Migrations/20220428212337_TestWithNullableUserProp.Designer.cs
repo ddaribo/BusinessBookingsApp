@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessBookingsApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220427134354_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20220428212337_TestWithNullableUserProp")]
+    partial class TestWithNullableUserProp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -98,22 +98,18 @@ namespace BusinessBookingsApp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"), 1L, 1);
 
                     b.Property<string>("ApplicationUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BookingDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
                     b.HasKey("BookingId");
 
                     b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("BusinessId");
 
                     b.ToTable("Bookings");
                 });
@@ -130,11 +126,25 @@ namespace BusinessBookingsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("TimeSlotLength")
+                        .HasColumnType("real");
+
+                    b.Property<int>("WorkHoursEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkHoursStart")
+                        .HasColumnType("int");
+
                     b.HasKey("BusinessId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Businesses");
                 });
@@ -421,13 +431,18 @@ namespace BusinessBookingsApp.Migrations
                 {
                     b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("BusinessBookingsApp.Models.Business", null)
-                        .WithMany("Bookings")
-                        .HasForeignKey("BusinessId")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.Business", b =>
+                {
+                    b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
 
                     b.Navigation("ApplicationUser");
                 });
@@ -481,11 +496,6 @@ namespace BusinessBookingsApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("BusinessBookingsApp.Models.Business", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

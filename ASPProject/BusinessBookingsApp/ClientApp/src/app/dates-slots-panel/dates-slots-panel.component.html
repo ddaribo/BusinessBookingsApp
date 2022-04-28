@@ -1,0 +1,19 @@
+<table>
+  <thead style="width: 100px">
+    <tr>
+      <th>{{ currentThreeDates[0] | date: "shortDate" }}</th>
+      <th>{{ currentThreeDates[1] | date: "shortDate" }}</th>
+      <th>{{ currentThreeDates[2] | date: "shortDate" }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <td *ngFor="let currentDate of currentThreeDates">
+      <app-date-slots
+        [date]="currentDate"
+        [startHour]="9"
+        [endHour]="18"
+        [intervalTime]="2"
+      ></app-date-slots>
+    </td>
+  </tbody>
+</table>

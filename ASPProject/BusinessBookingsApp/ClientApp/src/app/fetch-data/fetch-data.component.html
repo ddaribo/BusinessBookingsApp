@@ -9,12 +9,17 @@
     <tr>
       <th>Name</th>
       <th>Address</th>
+      <th>Reservations</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let business of businesses">
-      <td>{{ business.name }}</td>
+    <tr *ngFor="let business of businesses" style="height:200px;">
+      <td>{{ business.name}}</td>
       <td>{{ business.address }}</td>
+      <td>
+        <app-dates-slots-panel></app-dates-slots-panel>
+        
+      </td>
     </tr>
   </tbody>
 </table>
