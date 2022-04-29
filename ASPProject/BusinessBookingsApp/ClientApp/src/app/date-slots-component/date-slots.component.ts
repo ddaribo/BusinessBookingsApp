@@ -21,7 +21,6 @@ export class DateSlotsComponent implements OnInit {
   public currentBusinessId!: number;
   public timeSlots!: any[];
 
-  // TODO: add isAvailable logic for each timeslot
 
   constructor(
     public http: HttpClient,
@@ -35,26 +34,31 @@ export class DateSlotsComponent implements OnInit {
       this.endHour!,
       this.intervalTime!
     );
-    console.log('Current business ID: ', this.currentBusinessId);
+
     this.timeSlots.forEach((t) => {
+
+      let dateTimeObj = moment(this.date!)
+      .set({ hour: t.hours(), minutes: t.minutes(), seconds: 0, milliseconds: 0 })
+      .local()
+      .toDate();
+
       const bodyObject = {
         "BusinessId": this.currentBusinessId.toString(),
-        "BookingDateTime": t.toDate(),
+        "BookingDateTime": dateTimeObj,
       };
 
       const headers = new HttpHeaders({
         'Content-Type': 'application/json',
       });
 
-      //console.log(t);
+     
       this.http
         .post<any[]>(this.baseUrl + 'api/bookings/bookingForBusinessAndSlot',
         bodyObject,
-        {headers: headers}
+        
         )
         .subscribe(
           (result) => {
-            //console.log(result);
             t.isAvailable = result === null;
           },
           (error) => console.error(error)
@@ -68,17 +72,17 @@ export class DateSlotsComponent implements OnInit {
     });
 
     let dateTimeObj = moment(this.date!)
-      .set({ hour: timeslot.hours(), minutes: timeslot.minutes(), seconds: 0 })
-      .toDate();
-    console.log(dateTimeObj);
+    .set({ hour: timeslot.hours(), minutes: timeslot.minutes(), seconds: 0, milliseconds: 0 })
+    .toDate();
     this.http
       .post<any[]>(this.baseUrl + 'api/bookings', {
-        businessId: 2,
+        businessId: this.currentBusinessId,
         bookingDateTime: dateTimeObj,
       })
       .subscribe(
         (result) => {
           console.log(result);
+          window.location.reload();
         },
         (error) => console.error(error)
       );

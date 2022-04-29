@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessBookingsApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220428212337_TestWithNullableUserProp")]
-    partial class TestWithNullableUserProp
+    [Migration("20220429132245_InitialSchema")]
+    partial class InitialSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,19 +97,17 @@ namespace BusinessBookingsApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"), 1L, 1);
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("BookingDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.HasKey("BookingId");
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasKey("BookingId");
 
                     b.ToTable("Bookings");
                 });
@@ -126,8 +124,9 @@ namespace BusinessBookingsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -143,8 +142,6 @@ namespace BusinessBookingsApp.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BusinessId");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Businesses");
                 });
@@ -425,26 +422,6 @@ namespace BusinessBookingsApp.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("BusinessBookingsApp.Models.Booking", b =>
-                {
-                    b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("BusinessBookingsApp.Models.Business", b =>
-                {
-                    b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

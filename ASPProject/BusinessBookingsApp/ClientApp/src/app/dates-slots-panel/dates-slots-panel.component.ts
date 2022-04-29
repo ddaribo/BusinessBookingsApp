@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Business } from '../fetch-data/fetch-data.component';
 
 @Component({
   selector: 'app-dates-slots-panel',
@@ -7,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class DatesSlotsPanelComponent implements OnInit {
   @Input()
-  public currentBusinessId!: number;
+  public currentBusiness!: Business;
   public intervalTime!: number;
   public currentThreeDates!: Date[];
   constructor() { }

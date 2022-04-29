@@ -60,10 +60,22 @@ namespace BusinessBookingsApp.Controllers
                 .Where(b => b.CreatedByUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 .Select(x => BookingItemToVM(x))
                 .ToListAsync();
+
         }
 
 
-        [HttpPost("bookingForBusinessAndSlot")]
+        // GET: api/Bookings/userBookings
+        [HttpGet("byBusiness/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingViewModel>>> GetBookingsByBusiness(int id)
+        {
+            return await _context.Bookings
+                .Where(b => b.BusinessId == id)
+                .Select(x => BookingItemToVM(x))
+                .ToListAsync();
+        }
+
+
+            [HttpPost("bookingForBusinessAndSlot")]
         public ActionResult<BookingViewModel> GetBookingForBusinessAndSlot(
             [FromBody] BookingBusinessAndSlot bookingBusinessAndSlot
             )
@@ -73,10 +85,12 @@ namespace BusinessBookingsApp.Controllers
             List<Booking> bookingsForBusiness = _context.Bookings
                 .Where(b => b.BusinessId.Equals(int.Parse(bookingBusinessAndSlot.BusinessId))).ToList();
 
-            return bookingsForBusiness
+
+            var res = bookingsForBusiness
                 .Where(b => (this.CompareDatesPrecisely(b.BookingDateTime, date) == 0))
                 .Select(x => BookingItemToVM(x))
                 .FirstOrDefault();
+            return res;
         }
 
         // PUT: api/Bookings/5
@@ -159,7 +173,7 @@ namespace BusinessBookingsApp.Controllers
           {
               BookingId = booking.BookingId,
               BusinessId = booking.BusinessId,
-              BookingDateTime = booking.BookingDateTime.ToLocalTime()
+              BookingDateTime = booking.BookingDateTime
           };
     }
 

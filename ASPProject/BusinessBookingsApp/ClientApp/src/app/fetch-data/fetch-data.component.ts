@@ -27,12 +27,12 @@ export class FetchDataComponent implements OnInit {
 
 }
 
-interface Business {
+export interface Business {
   businessId: number,
   name: string;
   address: string;
-  workHoursStart: string;
-  workHoursEnd: string;
-  timeSlotLength: string;
+  workHoursStart: number;
+  workHoursEnd: number;
+  timeSlotLength: number;
 }
 
