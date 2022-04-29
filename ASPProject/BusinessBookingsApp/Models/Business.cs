@@ -13,7 +13,6 @@ namespace BusinessBookingsApp.Models
         public int WorkHoursEnd { get; set; }
         [Range(0.5,23)]
         public float TimeSlotLength { get; set; }
-        public string? ApplicationUserId { get; set; }
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public string CreatedByUserId { get; set; }
     }
 }

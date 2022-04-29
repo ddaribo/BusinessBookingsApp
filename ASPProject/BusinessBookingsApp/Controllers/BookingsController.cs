@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
 using BusinessBookingsApp.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -44,6 +47,18 @@ namespace BusinessBookingsApp.Controllers
             }
 
             return BookingItemToVM(booking);
+        }
+
+
+        // GET: api/Bookings/userBookings
+        [Authorize]
+        [HttpGet("userBookings")]
+        public async Task<ActionResult<IEnumerable<BookingViewModel>>> GetUserBookings()
+        {
+            return await _context.Bookings
+                .Where(b => b.CreatedByUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                .Select(x => BookingItemToVM(x))
+                .ToListAsync();
         }
 
         // PUT: api/Bookings/5
@@ -83,8 +98,8 @@ namespace BusinessBookingsApp.Controllers
             var bookingItem = new Booking
             {
                 BusinessId = bookingVM.BusinessId,
-                BookingDateTime = bookingVM.BookingDateTime.ToLocalTime()
-
+                BookingDateTime = bookingVM.BookingDateTime.ToLocalTime(),
+                CreatedByUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
             };
             _context.Bookings.Add(bookingItem);
             await _context.SaveChangesAsync();

@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
 using BusinessBookingsApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -75,16 +77,19 @@ namespace BusinessBookingsApp.Controllers
 
             return NoContent();
         }
-
+        [Authorize]
         // POST: api/Businesses
         [HttpPost]
         public async Task<ActionResult<BusinessViewModel>> PostBusiness(BusinessViewModel businessVM)
         {
             var businessItem = new Business
             {
-                BusinessId = businessVM.BusinessId,
                 Name = businessVM.Name,
                 Address = businessVM.Address,
+                WorkHoursStart = businessVM.WorkHoursStart,
+                WorkHoursEnd = businessVM.WorkHoursEnd,
+                TimeSlotLength = businessVM.TimeSlotLength,
+                CreatedByUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
             };
             _context.Businesses.Add(businessItem);
 
@@ -117,7 +122,6 @@ namespace BusinessBookingsApp.Controllers
         public static BusinessViewModel BusinessItemToVM(Business business) =>
            new BusinessViewModel
            {
-               BusinessId = business.BusinessId,
                Name = business.Name,
                Address = business.Address,
                WorkHoursStart = business.WorkHoursStart,

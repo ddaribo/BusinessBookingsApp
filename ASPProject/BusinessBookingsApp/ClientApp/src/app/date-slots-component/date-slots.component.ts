@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import * as moment from 'moment';
+import { AuthorizeService } from 'src/api-authorization/authorize.service';
 
 @Component({
   selector: 'app-date-slots',
@@ -19,7 +20,8 @@ export class DateSlotsComponent implements OnInit {
   public timeSlots!: any[];
 
 
-  constructor(public http: HttpClient, @Inject('BASE_URL') public baseUrl: string) {
+  constructor(public http: HttpClient, @Inject('BASE_URL') public baseUrl: string,
+  private authService: AuthorizeService) {
     
   }
 
@@ -28,6 +30,10 @@ export class DateSlotsComponent implements OnInit {
   }
 
   public requestBooking(timeslot: any){
+    this.authService.getUser().subscribe(x => {
+      console.log(x);
+    });
+    
     let dateTimeObj = moment(this.date!).set({ hour: timeslot.hours(), minutes: timeslot.minutes(), seconds: 0}).toDate();
 console.log(dateTimeObj);
     this.http.post<any[]>(this.baseUrl + 'api/bookings', {

@@ -14,6 +14,7 @@ import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { DateSlotsComponent } from './date-slots-component/date-slots.component';
 import { DatesSlotsPanelComponent } from './dates-slots-panel/dates-slots-panel.component';
+import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { DatesSlotsPanelComponent } from './dates-slots-panel/dates-slots-panel.
     CounterComponent,
     FetchDataComponent,
     DateSlotsComponent,
-    DatesSlotsPanelComponent
+    DatesSlotsPanelComponent,
+    UserBookingsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

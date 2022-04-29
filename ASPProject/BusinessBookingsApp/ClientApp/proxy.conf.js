@@ -8,6 +8,7 @@ const PROXY_CONFIG = [
     context: [
       "/api/businesses",
       "/api/bookings",
+      "api/bookings/userBookings",
       "/_configuration",
       "/.well-known",
       "/Identity",

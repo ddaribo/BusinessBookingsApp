@@ -55,6 +55,7 @@ app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
