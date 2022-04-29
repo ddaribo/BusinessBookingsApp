@@ -122,6 +122,7 @@ namespace BusinessBookingsApp.Controllers
         public static BusinessViewModel BusinessItemToVM(Business business) =>
            new BusinessViewModel
            {
+               BusinessId = business.BusinessId,
                Name = business.Name,
                Address = business.Address,
                WorkHoursStart = business.WorkHoursStart,

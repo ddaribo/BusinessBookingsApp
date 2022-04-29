@@ -12,6 +12,7 @@ using BusinessBookingsApp.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -59,6 +60,23 @@ namespace BusinessBookingsApp.Controllers
                 .Where(b => b.CreatedByUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 .Select(x => BookingItemToVM(x))
                 .ToListAsync();
+        }
+
+
+        [HttpPost("bookingForBusinessAndSlot")]
+        public ActionResult<BookingViewModel> GetBookingForBusinessAndSlot(
+            [FromBody] BookingBusinessAndSlot bookingBusinessAndSlot
+            )
+        {
+            DateTime date = DateTime.Parse(bookingBusinessAndSlot.BookingDateTime).ToLocalTime();
+
+            List<Booking> bookingsForBusiness = _context.Bookings
+                .Where(b => b.BusinessId.Equals(int.Parse(bookingBusinessAndSlot.BusinessId))).ToList();
+
+            return bookingsForBusiness
+                .Where(b => (this.CompareDatesPrecisely(b.BookingDateTime, date) == 0))
+                .Select(x => BookingItemToVM(x))
+                .FirstOrDefault();
         }
 
         // PUT: api/Bookings/5
@@ -128,6 +146,14 @@ namespace BusinessBookingsApp.Controllers
             return _context.Bookings.Any(e => e.BookingId == id);
         }
 
+        private int CompareDatesPrecisely(DateTime d1, DateTime d2)
+        {
+            d1 = new DateTime(d1.Year, d1.Month, d1.Day, d1.Hour, d1.Minute, 0);
+            d2 = new DateTime(d2.Year, d2.Month, d2.Day, d2.Hour, d2.Minute, 0);
+
+            return DateTime.Compare(d1, d2);
+        }
+
         private static BookingViewModel BookingItemToVM(Booking booking) =>
           new BookingViewModel
           {
@@ -135,5 +161,11 @@ namespace BusinessBookingsApp.Controllers
               BusinessId = booking.BusinessId,
               BookingDateTime = booking.BookingDateTime.ToLocalTime()
           };
+    }
+
+    public class BookingBusinessAndSlot
+    {
+        public string BusinessId { get; set; }
+        public string BookingDateTime { get; set; }
     }
 }

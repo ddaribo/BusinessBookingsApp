@@ -9,6 +9,7 @@ const PROXY_CONFIG = [
       "/api/businesses",
       "/api/bookings",
       "api/bookings/userBookings",
+      "api/bookings/bookingForBusinessAndSlot",
       "/_configuration",
       "/.well-known",
       "/Identity",

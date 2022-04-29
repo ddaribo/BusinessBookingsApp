@@ -28,6 +28,7 @@ export class FetchDataComponent implements OnInit {
 }
 
 interface Business {
+  businessId: number,
   name: string;
   address: string;
   workHoursStart: string;

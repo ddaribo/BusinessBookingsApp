@@ -1,4 +1,4 @@
 <p>{{date}}</p>
 <div *ngFor="let timeslot of timeSlots">
-    <button (click)="requestBooking(timeslot)">{{ timeslot | date:'HH:mm' }}</button>
+    <button (click)="requestBooking(timeslot)" [disabled]="!timeslot.isAvailable">{{ timeslot | date:'HH:mm' }}</button>
   </div>

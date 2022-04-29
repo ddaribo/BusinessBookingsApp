@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-dates-slots-panel',
@@ -6,6 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dates-slots-panel.component.css']
 })
 export class DatesSlotsPanelComponent implements OnInit {
+  @Input()
+  public currentBusinessId!: number;
+  public intervalTime!: number;
   public currentThreeDates!: Date[];
   constructor() { }
 
