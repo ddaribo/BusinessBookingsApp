@@ -15,7 +15,7 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { DateSlotsComponent } from './date-slots-component/date-slots.component';
 import { DatesSlotsPanelComponent } from './dates-slots-panel/dates-slots-panel.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
-import { IgxButtonModule } from '@infragistics/igniteui-angular';
+import { IgxButtonModule, IgxProgressBarModule } from '@infragistics/igniteui-angular';
 
 @NgModule({
   declarations: [
@@ -34,6 +34,7 @@ import { IgxButtonModule } from '@infragistics/igniteui-angular';
     FormsModule,
     ApiAuthorizationModule,
     IgxButtonModule,
+    IgxProgressBarModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },

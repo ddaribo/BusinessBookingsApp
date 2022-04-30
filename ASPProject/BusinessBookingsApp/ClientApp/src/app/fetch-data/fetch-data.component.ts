@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Business } from '../models/Business';
 
 
 @Component({
@@ -23,12 +24,5 @@ export class FetchDataComponent implements OnInit {
 
 }
 
-export interface Business {
-  businessId: number,
-  name: string;
-  address: string;
-  workHoursStart: number;
-  workHoursEnd: number;
-  timeSlotLength: number;
-}
+
 

@@ -8,15 +8,26 @@
     </tr>
   </thead>
   <tbody >
+    <button igxButton="raised" (click)="loadPrevThreeDates()">Prev 3 dates</button>
     <td *ngFor="let currentDate of currentThreeDates"> 
-
+      <!-- <igx-circular-bar
+      *ngIf="!timeSlotsLoaded"
+      [indeterminate]="true"
+      [textVisibility]="false"
+    ></igx-circular-bar> -->
+    <div style="display: flex; flex-direction:row;">
       <app-date-slots
-        [date]="currentDate"
-        [startHour]="currentBusiness.workHoursStart"
-        [endHour]="currentBusiness.workHoursEnd"
-        [intervalTime]="currentBusiness.timeSlotLength"
-        [currentBusinessId]="currentBusiness.businessId"
+      [date]="currentDate"
+      [startHour]="currentBusiness.workHoursStart"
+      [endHour]="currentBusiness.workHoursEnd"
+      [intervalTime]="currentBusiness.timeSlotLength"
+      [currentBusinessId]="currentBusiness.businessId"
+      (timeSlotsLoaded)="handleTimeSlotsLoaded($event)"
       ></app-date-slots>
-    </td>
+      <!-- [ngClass]="{'notLoaded': !timeSlotsLoaded}" -->
+      
+    </div>
+  </td>
+  <button igxButton="raised" (click)="loadNextThreeDates()">Next 3 dates</button>
   </tbody>
 </table>

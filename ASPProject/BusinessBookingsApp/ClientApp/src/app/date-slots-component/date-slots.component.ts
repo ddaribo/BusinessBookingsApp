@@ -1,12 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import * as moment from 'moment';
+import { forkJoin, Observable, of } from 'rxjs';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
+import { TimeSlot } from '../models/TimeSlot';
 
 @Component({
   selector: 'app-date-slots',
   templateUrl: './date-slots.component.html',
-  styleUrls: ['./date-slots.component.css'],
+  styleUrls: ['./date-slots.component.scss'],
 })
 export class DateSlotsComponent implements OnInit {
   @Input()
@@ -19,8 +28,10 @@ export class DateSlotsComponent implements OnInit {
   public intervalTime!: number;
   @Input()
   public currentBusinessId!: number;
-  public timeSlots!: any[];
+  @Output() timeSlotsLoaded = new EventEmitter<boolean>();
 
+  public loaded = false;
+  public timeSlots!: TimeSlot[];
 
   constructor(
     public http: HttpClient,
@@ -35,45 +46,60 @@ export class DateSlotsComponent implements OnInit {
       this.intervalTime!
     );
 
-    this.timeSlots.forEach((t) => {
-
+    let requestObservables: Observable<any>[] = [];
+    this.timeSlots.forEach((t: TimeSlot) => {
       let dateTimeObj = moment(this.date!)
-      .set({ hour: t.hours(), minutes: t.minutes(), seconds: 0, milliseconds: 0 })
-      .local()
-      .toDate();
+        .set({
+          hour: t.slot.hours(),
+          minutes: t.slot.minutes(),
+          seconds: 0,
+          milliseconds: 0,
+        })
+        .local()
+        .toDate();
 
       const bodyObject = {
-        "BusinessId": this.currentBusinessId.toString(),
-        "BookingDateTime": dateTimeObj,
+        BusinessId: this.currentBusinessId.toString(),
+        BookingDateTime: dateTimeObj,
       };
-
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-      });
-
-     
-      this.http
-        .post<any[]>(this.baseUrl + 'api/bookings/bookingForBusinessAndSlot',
-        bodyObject,
-        
-        )
-        .subscribe(
-          (result) => {
-            t.isAvailable = result === null;
-          },
-          (error) => console.error(error)
+      let obs =this.http
+        .post<any[]>(
+          this.baseUrl + 'api/bookings/bookingForBusinessAndSlot',
+          bodyObject
         );
+      requestObservables.push(obs);
     });
+
+    forkJoin(requestObservables).subscribe(
+      {
+        next: (res) => {
+          let cnt = 0;
+          res.forEach(r => {
+            this.timeSlots[cnt++].isAvailable = r === null;
+          })
+        },
+        complete: () => {
+          this.loaded = true;
+          this.loaded = true;
+          this.timeSlotsLoaded.emit(true);
+        }
+      }
+    );
   }
 
-  public requestBooking(timeslot: any) {
+  public requestBooking(timeslot: TimeSlot) {
     this.authService.getUser().subscribe((x) => {
       console.log(x);
     });
 
     let dateTimeObj = moment(this.date!)
-    .set({ hour: timeslot.hours(), minutes: timeslot.minutes(), seconds: 0, milliseconds: 0 })
-    .toDate();
+      .set({
+        hour: timeslot.slot.hours(),
+        minutes: timeslot.slot.minutes(),
+        seconds: 0,
+        milliseconds: 0,
+      })
+      .toDate();
     this.http
       .post<any[]>(this.baseUrl + 'api/bookings', {
         businessId: this.currentBusinessId,
@@ -103,7 +129,8 @@ export class DateSlotsComponent implements OnInit {
     var timeStops = [];
 
     while (startTime <= endTime) {
-      timeStops.push(moment(startTime));
+      const timeStop =  { slot: moment(startTime), isAvailable: true };
+      timeStops.push(timeStop);
       startTime.add(interval, 'hours');
       var clone = startTime.clone();
       if (clone.add(interval, 'hour') > endTime) break;

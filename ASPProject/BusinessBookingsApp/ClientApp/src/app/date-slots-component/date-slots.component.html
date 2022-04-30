@@ -1,4 +1,15 @@
-<p>{{date}}</p>
-<div *ngFor="let timeslot of timeSlots">
-    <button (click)="requestBooking(timeslot)" [disabled]="!timeslot.isAvailable">{{ timeslot | date:'HH:mm' }}</button>
-  </div>
+<p>{{ date | date }}</p>
+
+<div *ngIf="!loaded">
+  <igx-circular-bar
+  [indeterminate]="true"
+  [textVisibility]="false"
+></igx-circular-bar>
+</div>
+<div *ngIf="loaded">
+  <div *ngFor="let timeslot of timeSlots">
+    <button (click)="requestBooking(timeslot)" [disabled]="!timeslot.isAvailable">
+      {{ timeslot.slot.toString() | date: "HH:mm" }}
+    </button>
+  </div> 
+</div>
