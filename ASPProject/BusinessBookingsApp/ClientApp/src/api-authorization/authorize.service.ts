@@ -45,20 +45,20 @@ export class AuthorizeService {
   private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject<IUser | null>(null);
 
   public isAuthenticated(): Observable<boolean> {
-    return this.getUser().pipe(map(u => !!u));
+    return this.getUser().pipe(map((u: any) => !!u));
   }
 
   public getUser(): Observable<IUser | null> {
     return concat(
-      this.userSubject.pipe(take(1), filter(u => !!u)),
-      this.getUserFromStorage().pipe(filter(u => !!u), tap(u => this.userSubject.next(u))),
+      this.userSubject.pipe(take(1), filter((u: any) => !!u)),
+      this.getUserFromStorage().pipe(filter((u: any) => !!u), tap((u: any) => this.userSubject.next(u))),
       this.userSubject.asObservable());
   }
 
   public getAccessToken(): Observable<string | null> {
     return from(this.ensureUserManagerInitialized())
       .pipe(mergeMap(() => from(this.userManager!.getUser())),
-        map(user => user && user.access_token));
+        map((user: { access_token: any; }) => user && user.access_token));
   }
 
   // We try to authenticate the user in three different ways:
@@ -194,6 +194,6 @@ export class AuthorizeService {
     return from(this.ensureUserManagerInitialized())
       .pipe(
         mergeMap(() => this.userManager!.getUser()),
-        map(u => u && u.profile));
+        map((u: { profile: any; }) => u && u.profile));
   }
 }
