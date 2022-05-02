@@ -33,9 +33,9 @@ export class DatesSlotsPanelComponent implements OnInit {
     const firstDate = this.currentThreeDates![0];
 
     this.currentThreeDates = [
-      this.addDays(firstDate, -1),
-      this.addDays(firstDate, -2),
       this.addDays(firstDate, -3),
+      this.addDays(firstDate, -2),
+      this.addDays(firstDate, -1),
     ];
   }
 

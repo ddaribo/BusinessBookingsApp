@@ -1,0 +1,6 @@
+<div *ngIf="business">
+
+    <h4>{{ business.name}}</h4>
+    <h5>{{ business.address }}</h5>
+    <app-dates-slots-panel [currentBusiness]="business"></app-dates-slots-panel>
+</div>

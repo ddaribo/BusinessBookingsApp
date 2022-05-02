@@ -10,7 +10,9 @@ import {
 import * as moment from 'moment';
 import { forkJoin, Observable, of } from 'rxjs';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
+import { BookingQuery } from '../models/Bookings';
 import { TimeSlot } from '../models/TimeSlot';
+import { BookingsService } from '../services/bookings.service';
 
 @Component({
   selector: 'app-date-slots',
@@ -36,7 +38,7 @@ export class DateSlotsComponent implements OnInit {
   constructor(
     public http: HttpClient,
     @Inject('BASE_URL') public baseUrl: string,
-    private authService: AuthorizeService
+    private bookingsService: BookingsService
   ) {}
 
   ngOnInit(): void {
@@ -58,15 +60,11 @@ export class DateSlotsComponent implements OnInit {
         .local()
         .toDate();
 
-      const bodyObject = {
+      const bodyObject: BookingQuery = {
         BusinessId: this.currentBusinessId.toString(),
         BookingDateTime: dateTimeObj,
       };
-      let obs =this.http
-        .post<any[]>(
-          this.baseUrl + 'api/bookings/bookingForBusinessAndSlot',
-          bodyObject
-        );
+      let obs = this.bookingsService.getBookingsByBusinessAndSlot(bodyObject);
       requestObservables.push(obs);
     });
 
@@ -88,9 +86,9 @@ export class DateSlotsComponent implements OnInit {
   }
 
   public requestBooking(timeslot: TimeSlot) {
-    this.authService.getUser().subscribe((x) => {
+    /*this.authService.getUser().subscribe((x) => {
       console.log(x);
-    });
+    });*/
 
     let dateTimeObj = moment(this.date!)
       .set({
@@ -100,12 +98,13 @@ export class DateSlotsComponent implements OnInit {
         milliseconds: 0,
       })
       .toDate();
-    this.http
-      .post<any[]>(this.baseUrl + 'api/bookings', {
-        businessId: this.currentBusinessId,
-        bookingDateTime: dateTimeObj,
-      })
-      .subscribe(
+
+    const bodyObject = {
+      businessId: this.currentBusinessId,
+      bookingDateTime: dateTimeObj,
+    };
+
+    this.bookingsService.createBooking(bodyObject).subscribe(
         (result) => {
           console.log(result);
           window.location.reload();

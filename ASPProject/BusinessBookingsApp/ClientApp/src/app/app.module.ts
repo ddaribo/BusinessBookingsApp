@@ -15,7 +15,11 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { DateSlotsComponent } from './date-slots-component/date-slots.component';
 import { DatesSlotsPanelComponent } from './dates-slots-panel/dates-slots-panel.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
-import { IgxButtonModule, IgxProgressBarModule } from '@infragistics/igniteui-angular';
+import { IgxButtonModule, IgxCardModule, IgxInputGroupModule, IgxLayoutModule, IgxProgressBarModule } from '@infragistics/igniteui-angular';
+import { BusinessCardComponent } from './businesses/business-card/business-card.component';
+import { BusinessesListComponent } from './businesses/businesses-list/businesses-list.component';
+import { BusinessDetailComponent } from './businesses/business-detail/business-detail.component';
+import { FilterPipe } from './shared/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -23,10 +27,14 @@ import { IgxButtonModule, IgxProgressBarModule } from '@infragistics/igniteui-an
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
+    FilterPipe,
     FetchDataComponent,
     DateSlotsComponent,
     DatesSlotsPanelComponent,
     UserBookingsComponent,
+    BusinessCardComponent,
+    BusinessDetailComponent,
+    BusinessesListComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -35,10 +43,15 @@ import { IgxButtonModule, IgxProgressBarModule } from '@infragistics/igniteui-an
     ApiAuthorizationModule,
     IgxButtonModule,
     IgxProgressBarModule,
+    IgxCardModule,
+    IgxLayoutModule,
+    IgxInputGroupModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
+      { path: 'businesses', component: BusinessesListComponent },
+      { path: 'businesses/:businessId', component: BusinessDetailComponent },
     ])
   ],
   providers: [
