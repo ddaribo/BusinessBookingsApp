@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { User } from 'oidc-client';
 import { Observable, pipe } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { AuthorizeService, IUser } from 'src/api-authorization/authorize.service';
@@ -14,7 +15,7 @@ import { BusinessService } from 'src/app/services/business.service';
 })
 export class BusinessDetailComponent implements OnInit {
   public businessId: number;
-  public isCurrentUserTheOwner: boolean;
+  public isCurrentUserTheOwner = false;
   public business: Business;
 
   public isAuthenticated?: boolean;
@@ -39,20 +40,19 @@ export class BusinessDetailComponent implements OnInit {
     .subscribe((response: Business) => {
       this.business = response;
 
-      /*this.authService.subject.subscribe((user: any) => {
-        if (user && user.me.id === this.animal.author.id) {
-          this.isCurrentUserTheAuthor = true;
+      this.authService.isAuthenticated().subscribe((res: boolean) => {
+        console.log(res);
+       this.isAuthenticated = res;
+       if(this.isAuthenticated) {
+         this.authService.getUser().pipe(first()).subscribe(u =>{
+          //console.log(u.name);
+          console.log((u as User))
+          console.log(this.business.createdByUserId)
+          // @ts-ignore
+          this.isCurrentUserTheOwner = u.sub === this.business.createdByUserId;
+        })
         }
-      });*/
-    });
-    this.authService.isAuthenticated().subscribe((res: boolean) => {
-      console.log(res);
-     this.isAuthenticated = res;
-     if(this.isAuthenticated) {
-       this.authService.getUser().pipe(first()).subscribe(u =>{
-        console.log(u.name);
-      })
-      }
+      });
     });
 
   }

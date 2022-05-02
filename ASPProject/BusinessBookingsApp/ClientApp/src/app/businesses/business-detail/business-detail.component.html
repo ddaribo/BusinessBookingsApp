@@ -4,3 +4,9 @@
     <h5>{{ business.address }}</h5>
     <app-dates-slots-panel [currentBusiness]="business"></app-dates-slots-panel>
 </div>
+
+<div *ngIf="isCurrentUserTheOwner" style="margin-top: 100px;">
+    <div>Need to modify your business info?</div>
+    <button igxButton="raised">Edit</button>
+    <button igxButton="raised">Delete</button>
+</div>

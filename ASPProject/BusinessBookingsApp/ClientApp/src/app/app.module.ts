@@ -15,11 +15,13 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { DateSlotsComponent } from './date-slots-component/date-slots.component';
 import { DatesSlotsPanelComponent } from './dates-slots-panel/dates-slots-panel.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
-import { IgxButtonModule, IgxCardModule, IgxInputGroupModule, IgxLayoutModule, IgxProgressBarModule } from '@infragistics/igniteui-angular';
+import { IgxButtonModule, IgxCardModule, IgxDialogModule, IgxIconModule, IgxInputGroupModule, IgxLayoutModule, IgxListModule, IgxProgressBarModule } from '@infragistics/igniteui-angular';
 import { BusinessCardComponent } from './businesses/business-card/business-card.component';
 import { BusinessesListComponent } from './businesses/businesses-list/businesses-list.component';
 import { BusinessDetailComponent } from './businesses/business-detail/business-detail.component';
 import { FilterPipe } from './shared/filter.pipe';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UserBusinessesComponent } from './user-businesses/user-businesses.component';
 
 @NgModule({
   declarations: [
@@ -35,10 +37,13 @@ import { FilterPipe } from './shared/filter.pipe';
     BusinessCardComponent,
     BusinessDetailComponent,
     BusinessesListComponent,
+    UserBusinessesComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
+    BrowserModule,
+	  BrowserAnimationsModule,
     FormsModule,
     ApiAuthorizationModule,
     IgxButtonModule,
@@ -46,10 +51,14 @@ import { FilterPipe } from './shared/filter.pipe';
     IgxCardModule,
     IgxLayoutModule,
     IgxInputGroupModule,
+    IgxDialogModule,
+    IgxIconModule,
+    IgxListModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
+      { path: 'my-bookings', component: UserBookingsComponent, canActivate: [AuthorizeGuard] },
+      { path: 'my-businesses', component: UserBusinessesComponent, canActivate: [AuthorizeGuard] },
       { path: 'businesses', component: BusinessesListComponent },
       { path: 'businesses/:businessId', component: BusinessDetailComponent },
     ])

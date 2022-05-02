@@ -10,5 +10,7 @@
        
         public int WorkHoursEnd { get; set; }
         public float TimeSlotLength { get; set; }
+
+        public string CreatedByUserId { get; set; }
     }
 }

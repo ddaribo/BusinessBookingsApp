@@ -38,10 +38,8 @@ export class BookingsService implements OnDestroy {
     return this.http.get<any[]>(this.baseUrl + 'api/bookings/userBookings');
   }
 
-  public createBooking(bodyObject: {
-    businessId: number;
-    bookingDateTime: Date;
-  }): Observable<Booking> {
+  public createBooking(bodyObject:any
+  ): Observable<Booking> {
     return this.http
       .post<Booking>(this.baseUrl + 'api/bookings', bodyObject)
       .pipe(

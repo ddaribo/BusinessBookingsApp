@@ -21,10 +21,12 @@ namespace BusinessBookingsApp.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public BookingsController(ApplicationDbContext context)
+        private IHttpContextAccessor _httpContextAccessor;
+        public BookingsController(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/Bookings
@@ -94,6 +96,7 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // PUT: api/Bookings/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBooking(int id, BookingViewModel bookingVM)
         {
@@ -124,6 +127,7 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // POST: api/Bookings
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<BookingViewModel>> PostBooking(BookingViewModel bookingVM)
         {
@@ -140,6 +144,7 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // DELETE: api/Bookings/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
@@ -173,7 +178,8 @@ namespace BusinessBookingsApp.Controllers
           {
               BookingId = booking.BookingId,
               BusinessId = booking.BusinessId,
-              BookingDateTime = booking.BookingDateTime
+              BookingDateTime = booking.BookingDateTime,
+              CreatedByUserId = booking.CreatedByUserId
           };
     }
 

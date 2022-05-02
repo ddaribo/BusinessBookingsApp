@@ -5,4 +5,5 @@ export interface Business {
     workHoursStart: number;
     workHoursEnd: number;
     timeSlotLength: number;
+    createdByUserId: string;
   }

@@ -1,1 +1,31 @@
-<p>user-bookings works!</p>
+<h2>View your bookings</h2>
+
+<igx-list #bookingsList>
+    <igx-list-item *ngFor="let booking of userBookingsRev; let i = index;">
+        <h4 igxListLineTitle><span style="margin: 20px;"><b>{{i}}</b></span>  <span *ngIf="booking.business">{{booking.business.name}}</span></h4>
+        <p igxListLineSubTitle>{{ booking.bookingDateTime | date }}</p>
+        <igx-suffix >
+            <igx-icon (click)="requestDelete(booking)">delete</igx-icon>
+        </igx-suffix>
+      </igx-list-item>
+    <ng-template igxEmptyList>
+        <p class="empty">You have not made any bookings yet!</p>
+    </ng-template>
+
+    <ng-template igxDataLoading>
+        Loading your bookings
+        <igx-circular-bar
+        [indeterminate]="true"
+        [textVisibility]="false"
+      ></igx-circular-bar>
+    </ng-template>
+</igx-list>
+
+<igx-dialog #alert
+    title="Deleting booking"
+    message="You will no logner see this booking in your history! Are you sure?"
+    leftButtonLabel="Cancel"
+    (leftButtonSelect)="alert.close()"
+    rightButtonLabel="OK"
+    (rightButtonSelect)="deleteBookingFromList()">
+</igx-dialog>

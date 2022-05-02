@@ -1,3 +1,14 @@
 .notLoaded {
     visibility: collapse;
 }
+
+button{
+    margin: auto 0;
+}
+
+#wrapper{
+    display: flex; flex-direction:row;
+    height: auto;
+    min-height: 400px;
+    margin-top: 50px;
+}

@@ -89,7 +89,7 @@ namespace BusinessBookingsApp.Controllers
                 WorkHoursStart = businessVM.WorkHoursStart,
                 WorkHoursEnd = businessVM.WorkHoursEnd,
                 TimeSlotLength = businessVM.TimeSlotLength,
-                CreatedByUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
+                CreatedByUserId = HttpContext.User.Identity.Name
             };
             _context.Businesses.Add(businessItem);
 
@@ -99,6 +99,7 @@ namespace BusinessBookingsApp.Controllers
         }
 
         // DELETE: api/Businesses/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBusiness(int id)
         {
@@ -128,6 +129,7 @@ namespace BusinessBookingsApp.Controllers
                WorkHoursStart = business.WorkHoursStart,
                WorkHoursEnd = business.WorkHoursEnd,
                TimeSlotLength = business.TimeSlotLength,
+               CreatedByUserId = business.CreatedByUserId
            };
     }
 

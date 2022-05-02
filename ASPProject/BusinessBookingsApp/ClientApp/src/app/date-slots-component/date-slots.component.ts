@@ -6,9 +6,12 @@ import {
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
+import { IgxDialogComponent } from '@infragistics/igniteui-angular';
 import * as moment from 'moment';
 import { forkJoin, Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { BookingQuery } from '../models/Bookings';
 import { TimeSlot } from '../models/TimeSlot';
@@ -32,13 +35,20 @@ export class DateSlotsComponent implements OnInit {
   public currentBusinessId!: number;
   @Output() timeSlotsLoaded = new EventEmitter<boolean>();
 
+  @ViewChild("alert", {static: true}) public alert: IgxDialogComponent;
+
+  @ViewChild("confirm", {static: true}) public confirmDialog: IgxDialogComponent;
+
+  public timeslot: TimeSlot;
+
   public loaded = false;
   public timeSlots!: TimeSlot[];
 
   constructor(
     public http: HttpClient,
     @Inject('BASE_URL') public baseUrl: string,
-    private bookingsService: BookingsService
+    private bookingsService: BookingsService,
+    private authService: AuthorizeService
   ) {}
 
   ngOnInit(): void {
@@ -77,39 +87,58 @@ export class DateSlotsComponent implements OnInit {
           })
         },
         complete: () => {
-          this.loaded = true;
-          this.loaded = true;
-          this.timeSlotsLoaded.emit(true);
+            this.loaded = true;
+            this.timeSlotsLoaded.emit(true);
         }
       }
     );
   }
 
   public requestBooking(timeslot: TimeSlot) {
-    /*this.authService.getUser().subscribe((x) => {
+    this.authService.getUser().subscribe((x) => {
       console.log(x);
-    });*/
+    });
+
+    !this.authService.isAuthenticated().pipe(take(1)).subscribe(res => {
+      if(!res){
+        this.alert.open();
+        return;
+      }
+    });
+
+    this.timeslot = timeslot;
+    this.confirmDialog.open();
+  }
+  
+  
+  public onConfirmRequestBooking(event: any){
 
     let dateTimeObj = moment(this.date!)
-      .set({
-        hour: timeslot.slot.hours(),
-        minutes: timeslot.slot.minutes(),
-        seconds: 0,
-        milliseconds: 0,
-      })
-      .toDate();
+    .set({
+      hour: this.timeslot.slot.hours(),
+      minutes: this.timeslot.slot.minutes(),
+      seconds: 0,
+      milliseconds: 0,
+    })
+    .toDate();
 
-    const bodyObject = {
-      businessId: this.currentBusinessId,
-      bookingDateTime: dateTimeObj,
-    };
+  const bodyObject = {
+    businessId: this.currentBusinessId,
+    bookingDateTime: dateTimeObj,
+    createdByUserId: "s"
+  };
 
     this.bookingsService.createBooking(bodyObject).subscribe(
         (result) => {
           console.log(result);
-          window.location.reload();
+          this.timeslot = null;
+          //window.location.reload();
+          this.confirmDialog.close();
         },
-        (error) => console.error(error)
+        (error) => {
+          console.error(error);
+          this.confirmDialog.open();
+        }
       );
   }
 

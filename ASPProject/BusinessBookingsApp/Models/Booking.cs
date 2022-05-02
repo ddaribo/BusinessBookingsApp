@@ -7,8 +7,5 @@
         public DateTime BookingDateTime { get; set; }
 
         public string CreatedByUserId { get; set; }
-
-
-
     }
 }
