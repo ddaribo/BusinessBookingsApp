@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
 import { Booking, BookingQuery } from '../models/Bookings';
 
@@ -53,6 +53,20 @@ export class BookingsService implements OnDestroy {
     this.subject.next(null);
 
     return this.http.delete<Booking>(this.baseUrl + 'api/bookings/' + id);
+  }
+
+  public requireEmailReminder(booking: Booking, date: Date){
+    let userName = "";
+    this.authService.getUser().pipe(take(1)).subscribe(
+      res => userName = res.name
+    );
+    console.log(date);
+    console.log(userName);
+      return this.http.post<any>('http://localhost:3000/email', {
+        "receiver": userName,
+        "content": "Sample content",
+        "date_issued": booking.bookingDateTime,
+      });
   }
 
   ngOnDestroy(): void {

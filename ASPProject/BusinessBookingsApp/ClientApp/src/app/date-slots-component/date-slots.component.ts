@@ -13,7 +13,7 @@ import * as moment from 'moment';
 import { forkJoin, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AuthorizeService } from 'src/api-authorization/authorize.service';
-import { BookingQuery } from '../models/Bookings';
+import { Booking, BookingQuery } from '../models/Bookings';
 import { TimeSlot } from '../models/TimeSlot';
 import { BookingsService } from '../services/bookings.service';
 
@@ -134,6 +134,8 @@ export class DateSlotsComponent implements OnInit {
           this.timeslot = null;
           //window.location.reload();
           this.confirmDialog.close();
+          this.bookingsService.requireEmailReminder(result as Booking, bodyObject.bookingDateTime).subscribe(res =>
+            console.log(res), err => console.error());
         },
         (error) => {
           console.error(error);
