@@ -32,7 +32,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddSoapCore();
 builder.Services.TryAddScoped<BusinessService>();
 
-builder.Services.AddScoped<BusinessService>();
 
 var app = builder.Build();
 

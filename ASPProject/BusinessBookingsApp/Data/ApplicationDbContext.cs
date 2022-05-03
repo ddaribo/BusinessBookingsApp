@@ -13,5 +13,6 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     { }
         public DbSet<Business> Businesses { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<BusinessBookingsApp.Models.OfferedService> OfferedService { get; set; }
     
 }

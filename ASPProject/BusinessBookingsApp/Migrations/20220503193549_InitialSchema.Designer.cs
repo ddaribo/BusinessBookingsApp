@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessBookingsApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220502091138_CreatedByUserIdFieldRemains")]
-    partial class CreatedByUserIdFieldRemains
+    [Migration("20220503193549_InitialSchema")]
+    partial class InitialSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,17 +97,27 @@ namespace BusinessBookingsApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"), 1L, 1);
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("BookingDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedByUserId")
-                        .IsRequired()
+                    b.Property<bool?>("IsBusinessDeletedByOwner")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookingId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("BusinessId");
 
                     b.ToTable("Bookings");
                 });
@@ -124,9 +134,15 @@ namespace BusinessBookingsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CreatedByUserId")
+                    b.Property<string>("ApplicationUserId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsRemovedByOwner")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -143,7 +159,36 @@ namespace BusinessBookingsApp.Migrations
 
                     b.HasKey("BusinessId");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.OfferedService", b =>
+                {
+                    b.Property<int>("OfferedServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OfferedServiceId"), 1L, 1);
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OfferedServiceId");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("OfferedService");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -424,6 +469,51 @@ namespace BusinessBookingsApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessBookingsApp.Models.Booking", b =>
+                {
+                    b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessBookingsApp.Models.Business", "Business")
+                        .WithMany("Bookings")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.Business", b =>
+                {
+                    b.HasOne("BusinessBookingsApp.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.OfferedService", b =>
+                {
+                    b.HasOne("BusinessBookingsApp.Models.Booking", null)
+                        .WithMany("RequestedServices")
+                        .HasForeignKey("BookingId");
+
+                    b.HasOne("BusinessBookingsApp.Models.Business", "Business")
+                        .WithMany("OfferedServices")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -473,6 +563,18 @@ namespace BusinessBookingsApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.Booking", b =>
+                {
+                    b.Navigation("RequestedServices");
+                });
+
+            modelBuilder.Entity("BusinessBookingsApp.Models.Business", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("OfferedServices");
                 });
 #pragma warning restore 612, 618
         }

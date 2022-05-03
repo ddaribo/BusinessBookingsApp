@@ -59,7 +59,7 @@ namespace BusinessBookingsApp.Controllers
         public async Task<ActionResult<IEnumerable<BookingViewModel>>> GetUserBookings()
         {
             return await _context.Bookings
-                .Where(b => b.CreatedByUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                .Where(b => b.ApplicationUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 .Select(x => BookingItemToVM(x))
                 .ToListAsync();
 
@@ -135,7 +135,9 @@ namespace BusinessBookingsApp.Controllers
             {
                 BusinessId = bookingVM.BusinessId,
                 BookingDateTime = bookingVM.BookingDateTime.ToLocalTime(),
-                CreatedByUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
+                Notes = bookingVM.Notes,
+                RequestedServices = bookingVM.RequestedServices,
+                ApplicationUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
             };
             _context.Bookings.Add(bookingItem);
             await _context.SaveChangesAsync();
@@ -179,7 +181,9 @@ namespace BusinessBookingsApp.Controllers
               BookingId = booking.BookingId,
               BusinessId = booking.BusinessId,
               BookingDateTime = booking.BookingDateTime,
-              CreatedByUserId = booking.CreatedByUserId
+              CreatedByUserId = booking.ApplicationUserId,
+              Notes = booking.Notes,
+              RequestedServices = booking.RequestedServices
           };
     }
 

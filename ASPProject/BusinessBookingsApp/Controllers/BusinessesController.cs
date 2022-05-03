@@ -86,10 +86,12 @@ namespace BusinessBookingsApp.Controllers
             {
                 Name = businessVM.Name,
                 Address = businessVM.Address,
+                OfferedServices = businessVM.OfferedServices,
+                ImageUrl = businessVM.ImageUrl,
                 WorkHoursStart = businessVM.WorkHoursStart,
                 WorkHoursEnd = businessVM.WorkHoursEnd,
                 TimeSlotLength = businessVM.TimeSlotLength,
-                CreatedByUserId = HttpContext.User.Identity.Name
+                ApplicationUserId = HttpContext.User.Identity.Name
             };
             _context.Businesses.Add(businessItem);
 
@@ -126,10 +128,12 @@ namespace BusinessBookingsApp.Controllers
                BusinessId = business.BusinessId,
                Name = business.Name,
                Address = business.Address,
+               ImageUrl = business.ImageUrl,
+               OfferedServices = business.OfferedServices,
                WorkHoursStart = business.WorkHoursStart,
                WorkHoursEnd = business.WorkHoursEnd,
                TimeSlotLength = business.TimeSlotLength,
-               CreatedByUserId = business.CreatedByUserId
+               CreatedByUserId = business.ApplicationUserId
            };
     }
 

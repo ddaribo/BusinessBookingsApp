@@ -103,11 +103,13 @@ export class DateSlotsComponent implements OnInit {
       if(!res){
         this.alert.open();
         return;
+      } else {
+
+        this.timeslot = timeslot;
+        this.confirmDialog.open();
       }
     });
 
-    this.timeslot = timeslot;
-    this.confirmDialog.open();
   }
   
   
