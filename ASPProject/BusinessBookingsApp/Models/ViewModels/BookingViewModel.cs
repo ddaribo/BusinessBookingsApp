@@ -7,6 +7,6 @@
         public DateTime BookingDateTime { get; set; }
         public string? Notes { get; set; }
         public List<OfferedService>? RequestedServices { get; set; }
-        public string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace BusinessBookingsApp.Controllers
         public async Task<ActionResult<IEnumerable<BusinessViewModel>>> GetBusinesses()
         {
             return await _context.Businesses
+                .Where(b=> b.IsRemovedByOwner == false || b.IsRemovedByOwner == null)
                 .Select(x => BusinessItemToVM(x))
                 .ToListAsync();
         }
@@ -45,7 +46,13 @@ namespace BusinessBookingsApp.Controllers
                 return NotFound();
             }
 
-            return BusinessItemToVM(business);
+            if (business.IsRemovedByOwner == false || business.IsRemovedByOwner == null)
+            {
+                return BusinessItemToVM(business);
+            } else
+            {
+                return NotFound();
+            }
         }
 
         // PUT: api/Businesses/5
@@ -82,22 +89,48 @@ namespace BusinessBookingsApp.Controllers
         [HttpPost]
         public async Task<ActionResult<BusinessViewModel>> PostBusiness(BusinessViewModel businessVM)
         {
+            businessVM.CreatedByUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var businessItem = new Business
             {
                 Name = businessVM.Name,
                 Address = businessVM.Address,
-                OfferedServices = businessVM.OfferedServices,
+                OfferedServices = businessVM.OfferedServices, 
                 ImageUrl = businessVM.ImageUrl,
                 WorkHoursStart = businessVM.WorkHoursStart,
                 WorkHoursEnd = businessVM.WorkHoursEnd,
                 TimeSlotLength = businessVM.TimeSlotLength,
-                ApplicationUserId = HttpContext.User.Identity.Name
+                ApplicationUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
             };
+
+            if(businessVM.ImageUrl == null || businessVM.ImageUrl == "")
+            {
+                businessItem.ImageUrl = "https://i0.wp.com/shahpourpouyan.com/wp-content/uploads/2018/10/orionthemes-placeholder-image-1.png?resize=1024%2C683&ssl=1";
+            }
             _context.Businesses.Add(businessItem);
 
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBusiness", new { id = businessItem.BusinessId }, BusinessItemToVM(businessItem));
+        }
+
+        [Authorize]
+        // POST: api/Businesses/update/2
+        [HttpPost("update/{:id}")]
+        public async Task<ActionResult<BusinessViewModel>> Update(EditBusinessViewModel editBusinessVM)
+        {
+            var businessItem = await _context.Businesses.FindAsync(editBusinessVM.BusinessId);
+
+            if(businessItem == null)
+            {
+                return NotFound();
+            }
+
+            businessItem.Name = editBusinessVM.Name;
+            businessItem.Address = editBusinessVM.Address;
+            businessItem.ImageUrl = editBusinessVM.ImageUrl;
+
+            await _context.SaveChangesAsync();
+            return BusinessItemToVM(businessItem);
         }
 
         // DELETE: api/Businesses/5
@@ -111,7 +144,17 @@ namespace BusinessBookingsApp.Controllers
                 return NotFound();
             }
 
-            _context.Businesses.Remove(business);
+            business.IsRemovedByOwner = true;
+            var businessBookings = _context.Bookings
+                .Where(b => b.BusinessId == id)
+                .ToList();
+
+            foreach (var booking in businessBookings)
+            {
+                booking.IsBusinessDeletedByOwner = true;
+            }
+
+            //_context.Businesses.Remove(business);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -135,6 +178,7 @@ namespace BusinessBookingsApp.Controllers
                TimeSlotLength = business.TimeSlotLength,
                CreatedByUserId = business.ApplicationUserId
            };
+
     }
 
 }

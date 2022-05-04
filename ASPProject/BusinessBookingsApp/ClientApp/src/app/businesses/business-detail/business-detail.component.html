@@ -7,6 +7,19 @@
 
 <div *ngIf="isCurrentUserTheOwner" style="margin-top: 100px;">
     <div>Need to modify your business info?</div>
-    <button igxButton="raised">Edit</button>
-    <button igxButton="raised">Delete</button>
+    <button igxButton="raised"  [routerLink]="['/businesses', businessId, 'edit']" [queryParams]="{editing:'1'}">Edit</button>
+    <button igxButton="raised" (click)="requestDeleteBusiness()">Delete</button>
 </div>
+
+<igx-dialog #confirm>
+    <igx-dialog-title>
+     <span>Confirm</span>
+  </igx-dialog-title>
+
+  <div *ngIf="business">You have requested to delete your business from the app. Please, proceed by confirming.</div>
+
+  <div igxDialogActions>
+      <button igxButton (click)="confirm.close()">Cancel</button>
+      <button igxButton (click)="onConfirmDeleteBusiness($event)">Ok</button>
+  </div>
+</igx-dialog>

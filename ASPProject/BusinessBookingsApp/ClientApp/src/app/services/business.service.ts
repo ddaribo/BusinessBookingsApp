@@ -21,7 +21,7 @@ export class BusinessService implements OnDestroy {
     return this.http.get<Business[]>(this.baseUrl + 'api/businesses');
   }
 
-  public createBusiness(bodyObject: Business): Observable<Business> {
+  public createBusiness(bodyObject: any): Observable<Business> {
     return this.http
       .post<Business>(this.baseUrl + 'api/businesses', bodyObject)
       .pipe(
@@ -32,9 +32,9 @@ export class BusinessService implements OnDestroy {
   }
 
 
-  public editBusiness(businessId: number, bodyObject: Business){
+  public editBusiness(businessId: number, bodyObject: any){
     return this.http
-      .put(this.baseUrl + 'api/businesses' + businessId, bodyObject)
+      .post(this.baseUrl + 'api/businesses/update/' + businessId, bodyObject)
       .pipe(
         tap((business: any) => {
           this.subject.next(business);

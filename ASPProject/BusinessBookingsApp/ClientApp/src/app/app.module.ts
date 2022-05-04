@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -22,6 +22,7 @@ import { BusinessDetailComponent } from './businesses/business-detail/business-d
 import { FilterPipe } from './shared/filter.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserBusinessesComponent } from './user-businesses/user-businesses.component';
+import { BusinessFormComponent } from './business-form/business-form.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { UserBusinessesComponent } from './user-businesses/user-businesses.compo
     BusinessDetailComponent,
     BusinessesListComponent,
     UserBusinessesComponent,
+    BusinessFormComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -45,6 +47,7 @@ import { UserBusinessesComponent } from './user-businesses/user-businesses.compo
     BrowserModule,
 	  BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     ApiAuthorizationModule,
     IgxButtonModule,
     IgxProgressBarModule,
@@ -54,12 +57,15 @@ import { UserBusinessesComponent } from './user-businesses/user-businesses.compo
     IgxDialogModule,
     IgxIconModule,
     IgxListModule,
+    IgxInputGroupModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'my-bookings', component: UserBookingsComponent, canActivate: [AuthorizeGuard] },
       { path: 'my-businesses', component: UserBusinessesComponent, canActivate: [AuthorizeGuard] },
       { path: 'businesses', component: BusinessesListComponent },
+      { path: 'businesses/:businessId/edit', component: BusinessFormComponent },
+      { path: 'businesses/create', component: BusinessFormComponent },
       { path: 'businesses/:businessId', component: BusinessDetailComponent },
     ])
   ],

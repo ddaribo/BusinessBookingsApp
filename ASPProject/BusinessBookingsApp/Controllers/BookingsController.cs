@@ -1,18 +1,11 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BusinessBookingsApp.Data;
 using BusinessBookingsApp.Models;
 using BusinessBookingsApp.Models.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BusinessBookingsApp.Controllers
 {
@@ -60,24 +53,26 @@ namespace BusinessBookingsApp.Controllers
         {
             return await _context.Bookings
                 .Where(b => b.ApplicationUserId.Equals(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                .Where(b => b.IsBusinessDeletedByOwner == false || b.IsBusinessDeletedByOwner == null)
                 .Select(x => BookingItemToVM(x))
                 .ToListAsync();
 
         }
 
 
-        // GET: api/Bookings/userBookings
+        // GET: api/Bookings/byBusiness/5
         [HttpGet("byBusiness/{id}")]
         public async Task<ActionResult<IEnumerable<BookingViewModel>>> GetBookingsByBusiness(int id)
         {
             return await _context.Bookings
                 .Where(b => b.BusinessId == id)
+                .Where(b => b.IsBusinessDeletedByOwner == false || b.IsBusinessDeletedByOwner == null)
                 .Select(x => BookingItemToVM(x))
                 .ToListAsync();
         }
 
 
-            [HttpPost("bookingForBusinessAndSlot")]
+        [HttpPost("bookingForBusinessAndSlot")]
         public ActionResult<BookingViewModel> GetBookingForBusinessAndSlot(
             [FromBody] BookingBusinessAndSlot bookingBusinessAndSlot
             )
@@ -85,7 +80,9 @@ namespace BusinessBookingsApp.Controllers
             DateTime date = DateTime.Parse(bookingBusinessAndSlot.BookingDateTime).ToLocalTime();
 
             List<Booking> bookingsForBusiness = _context.Bookings
-                .Where(b => b.BusinessId.Equals(int.Parse(bookingBusinessAndSlot.BusinessId))).ToList();
+                .Where(b => b.BusinessId.Equals(int.Parse(bookingBusinessAndSlot.BusinessId)))
+                .Where(b => b.IsBusinessDeletedByOwner == false || b.IsBusinessDeletedByOwner == null)
+                .ToList();
 
 
             var res = bookingsForBusiness
