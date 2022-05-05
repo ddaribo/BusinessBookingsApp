@@ -23,12 +23,22 @@ export class AuthService {
     return this.http.post<any>(this.registerPath, data);
   }
 
-  public saveToken(token: string) {
+  public logout(){
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
+
+  public saveUserData(token: string, user: any) {
     localStorage.setItem('token', token);
+    localStorage.setItem('user', user);
   }
 
   public getToken() {
     return localStorage.getItem('token');
+  }
+
+  public getUserId(){
+    return localStorage.getItem('user');
   }
 
   public isAuthenticated() {

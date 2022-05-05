@@ -20,6 +20,7 @@ const routes: Routes = [
     {path: 'createBusiness', component: CreateBusinessComponent, canActivate: [AuthGuardService]},
     { path: 'businesses', component: BusinessesListComponent },
     { path: 'businesses/:businessId', component: BusinessDetailComponent },
+    { path: 'businesses/:businessId/edit', component: CreateBusinessComponent },
     { path: 'my-bookings', component: UserBookingsComponent, canActivate: [AuthGuardService] },
     { path: 'my-businesses', component: UserBusinessesComponent, canActivate: [AuthGuardService] },
 ];

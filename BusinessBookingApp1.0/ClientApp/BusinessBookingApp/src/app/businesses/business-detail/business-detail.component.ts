@@ -41,7 +41,7 @@ export class BusinessDetailComponent implements OnInit {
 
        this.isAuthenticated =  this.authService.isAuthenticated();
        if(this.isAuthenticated) {
-        //this.isCurrentUserTheOwner = this.authService.getToken === this.business.createdByUserId;
+        this.isCurrentUserTheOwner = this.authService.getUserId() === this.business.userId;
        }
     });
   }
