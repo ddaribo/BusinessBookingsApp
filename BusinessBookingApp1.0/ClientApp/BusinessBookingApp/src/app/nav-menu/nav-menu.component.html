@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+<!-- <ul class="navbar-nav" *ngIf="isAuthenticated">
+    Hello
+    <li class="nav-item">
+        <a  class="nav-link text-dark" [routerLink]='["/logout"]' [state]='{ local: true }' title="Logout">Logout</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/businesses"]'>Businesses</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/createBusiness"]'>Create Business</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/my-bookings"]'>My Bookings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/my-businesses"]'>My Businesses</a>
+    </li>
+</ul>
+<ul class="navbar-nav" *ngIf="isAuthenticated !== true">
+  <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/register"]'>Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/businesses"]'>Businesses</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/createBusiness"]'>Create Business</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" [routerLink]='["/login"]'>Login</a>
+    </li>
+</ul> -->
+
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<mat-toolbar color="primary" class="navbar">
+	<div id="mainLink">
+		<a [routerLink]="['']" routerLinkActive="active">
+			<span class="material-symbols-outlined">
+                book_online
+                </span>Business Bookings
+		</a>
+	</div>
+
+	<div class="links">
+		<div *ngIf="!isAuthenticated">
+			<a mat-button [routerLink]="['/login']" routerLinkActive="active" class="nav-link">
+				Log in
+			</a>
+		</div>
+		<div *ngIf="!isAuthenticated">
+			<a mat-button [routerLink]="['/register']">Sign up</a>
+		</div>
+		<div>
+			<a mat-button [routerLink]="['businesses']">Businesses</a>
+		</div>
+        <div>
+			<a mat-button [routerLink]="['my-bookings']">My Businesses</a>
+		</div>
+        <div>
+			<a mat-button [routerLink]="['my-businesses']">My Bookings</a>
+		</div>
+		<div>
+			<a mat-button [routerLink]="['/createBusiness']">
+				<span class="material-icons">create</span>Create Business</a>
+		</div>
+		<div *ngIf="isAuthenticated">
+			<a mat-button [routerLink]="['user']">
+				<span class="material-icons" style="height: 1.3em; padding-top: 0.2em;">account_circle</span>
+			</a>
+		</div>
+		<div *ngIf="isAuthenticated">
+			<a mat-button (click)="logout()">
+				<span class="material-icons">exit_to_app</span>Log out</a>
+		</div>
+	</div>
+</mat-toolbar>

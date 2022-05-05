@@ -1,0 +1,43 @@
+h1 {
+    margin: 1em auto;
+    text-align: center;
+    color: crimson;
+  }
+  
+    form {
+      width: 50%;
+      margin: 0 auto;
+    }
+    
+    .form-content{
+      margin: 0 auto;
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    mat-form-field {
+      width: 100%;
+    }
+    
+    button[type="submit"] {
+      margin-right: 0;
+      width: 5em;
+      margin-top: 2em;
+      padding: 0.2em 1em;
+      font-size: 1.5em;
+    }
+  
+    
+    .button-wrap {
+      position: relative;
+    }
+  
+    .img-container{
+      width: 300px;
+    }
+    .img-container img{
+      max-height: 100%;
+      max-width: 100%;
+    }
+    

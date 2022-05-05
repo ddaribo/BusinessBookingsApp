@@ -1,0 +1,19 @@
+<p>register works!</p>
+
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+    <igx-input-group>
+        <input igxInput name="username" type="text" formControlName="username"/>
+        <label igxLabel for="username">Username</label>
+    </igx-input-group>
+
+    <igx-input-group>
+        <input igxInput name="email" type="text" formControlName="email"/>
+        <label igxLabel for="email">Email</label>
+    </igx-input-group>
+
+    <igx-input-group>
+        <input igxInput name="password" type="text" formControlName="password"/>
+        <label igxLabel for="password">Password</label>
+    </igx-input-group>
+    <button igxButton type="submit">Register</button>
+</form>
