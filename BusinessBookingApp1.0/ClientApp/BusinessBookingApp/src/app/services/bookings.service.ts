@@ -70,10 +70,10 @@ export class BookingsService {
     );*/
     console.log(date);
     console.log(userName);
-      return this.http.post<any>('http://localhost:3000/email', {
+      /*return this.http.post<any>('http://localhost:3000/email', {
         "receiver": userName,
         "content": "Sample content",
         "date_issued": booking.bookingDateTime,
-      });
+      });*/
   }
 }

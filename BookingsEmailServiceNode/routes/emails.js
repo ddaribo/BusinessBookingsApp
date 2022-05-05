@@ -28,6 +28,8 @@ router.post('/', async (req, res) => {
         }
       });
 
+      console.log(req.body.receiver);
+
     let message = {
         from: 'Business Bookings App ' + '<' + process.env.BUSINESS_MAIL_USER.toString() + '>',
         //to: req.body.receiver,
@@ -50,13 +52,14 @@ router.post('/', async (req, res) => {
     let threeHoursBeforeBooking = new Date(bookingDate.setHours(bookingDate.getHours() - 3));
     //let threeHoursBeforeBooking = new Date(bookingDate.setMinutes(bookingDate.getMinutes() - 8)); when testing
 
+
     let remindingMessage = {
         from: 'Business Bookings App ' + '<' + process.env.BUSINESS_MAIL_USER.toString() + '>',
         //to: req.body.receiver,
         to: process.env.BUSINESS_MAIL_USER,
         subject: 'Your booking notification ✔',
-        text: "This is a reminder for your booking!",
-        html: '<p>' + "This is a reminder for your booking!" + '</p>'
+        text: req.body.reminderContent,
+        html: '<p>' + req.body.reminderContent + '</p>'
     };
 
     const job = schedule.scheduleJob(threeHoursBeforeBooking, () => {

@@ -136,8 +136,8 @@ export class DateSlotsComponent implements OnInit {
           this.timeslot = null;
           //window.location.reload();
           this.confirmDialog.close();
-          this.bookingsService.requireEmailReminder(result, bodyObject.bookingDateTime).subscribe(res =>
-            console.log(res), err => console.error());
+          /*this.bookingsService.requireEmailReminder(result, bodyObject.bookingDateTime).subscribe(res =>
+            console.log(res), err => console.error());*/
         },
         (error) => {
           console.error(error);
