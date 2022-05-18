@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { IgxDialogComponent, IgxListComponent } from '@infragistics/igniteui-angular';
 import { forkJoin, Observable } from 'rxjs';
-import { BookingsService } from '../services/bookings.service';
-import { BusinessService } from '../services/business.service';
+import { BookingsService } from '../bookings.service';
+import { BusinessService } from '../../businesses/business.service';
 
 @Component({
   selector: 'app-user-bookings',

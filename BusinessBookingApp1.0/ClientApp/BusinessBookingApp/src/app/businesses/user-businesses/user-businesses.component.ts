@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { IgxDialogComponent, IgxListComponent } from '@infragistics/igniteui-angular';
-import { BookingsService } from '../services/bookings.service';
-import { BusinessService } from '../services/business.service';
+import { BookingsService } from '../../bookings/bookings.service';
+import { BusinessService } from '../business.service';
 
 @Component({
   selector: 'app-user-businesses',

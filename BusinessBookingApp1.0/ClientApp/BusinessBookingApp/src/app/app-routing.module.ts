@@ -2,13 +2,14 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { BusinessDetailComponent } from "./businesses/business-detail/business-detail.component";
 import { BusinessesListComponent } from "./businesses/businesses-list/businesses-list.component";
-import { CreateBusinessComponent } from "./create-business/create-business.component";
-import { HomeComponent } from "./home/home.component";
-import { LoginComponent } from "./login/login.component";
-import { RegisterComponent } from "./register/register.component";
-import { AuthGuardService } from "./services/auth-guard.service";
-import { UserBookingsComponent } from "./user-bookings/user-bookings.component";
-import { UserBusinessesComponent } from "./user-businesses/user-businesses.component";
+import { CreateBusinessComponent } from "./businesses/create-business/create-business.component";
+import { HomeComponent } from "./shared/home/home.component";
+import { LoginComponent } from "./auth/login/login.component";
+import { RegisterComponent } from "./auth/register/register.component";
+import { AuthGuardService } from "./auth/auth-guard.service";
+import { UserBookingsComponent } from "./bookings/user-bookings/user-bookings.component";
+import { UserBusinessesComponent } from "./businesses/user-businesses/user-businesses.component";
+import { SharedModule } from "./shared/shared.module";
 
 const routes: Routes = [
     {
@@ -26,7 +27,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [
+        RouterModule.forRoot(routes)],
     exports:[RouterModule]
 })
 export class AppRoutingModule {}

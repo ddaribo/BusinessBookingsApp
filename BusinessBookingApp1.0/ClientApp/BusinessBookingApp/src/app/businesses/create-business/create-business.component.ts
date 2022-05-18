@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { shareReplay } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { BusinessService } from '../services/business.service';
+import { AuthService } from '../../auth/auth.service';
+import { BusinessService } from '../business.service';
 
 @Component({
   selector: 'app-create-business',

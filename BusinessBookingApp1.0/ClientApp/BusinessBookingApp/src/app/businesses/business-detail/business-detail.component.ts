@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IgxDialogComponent } from '@infragistics/igniteui-angular';
 import { Observable, pipe } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
-import { BusinessService } from 'src/app/services/business.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { BusinessService } from 'src/app/businesses/business.service';
 
 @Component({
   selector: 'app-business-detail',

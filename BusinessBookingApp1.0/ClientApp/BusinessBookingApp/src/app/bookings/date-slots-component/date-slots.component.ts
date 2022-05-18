@@ -12,10 +12,10 @@ import { IgxDialogComponent } from '@infragistics/igniteui-angular';
 import * as moment from 'moment';
 import { forkJoin, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { BookingQuery } from '../models/Bookings';
-import { TimeSlot } from '../models/TimeSlot';
-import { AuthService } from '../services/auth.service';
-import { BookingsService } from '../services/bookings.service';
+import { BookingQuery } from '../../shared/models/Bookings';
+import { TimeSlot } from '../../shared/models/TimeSlot';
+import { AuthService } from '../../auth/auth.service';
+import { BookingsService } from '../bookings.service';
 
 
 @Component({

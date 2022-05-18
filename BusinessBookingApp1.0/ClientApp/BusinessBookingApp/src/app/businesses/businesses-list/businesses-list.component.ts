@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BusinessService } from 'src/app/services/business.service';
+import { BusinessService } from 'src/app/businesses/business.service';
 
 @Component({
   selector: 'app-businesses-list',
