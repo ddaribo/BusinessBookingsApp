@@ -9,7 +9,7 @@
   </div>
   <div *ngIf="loaded">
     <div *ngFor="let timeslot of timeSlots" style="margin: 0 20px;">
-      <button igxButton="outlined" (click)="requestBooking(timeslot)" [disabled]="!timeslot.isAvailable">
+      <button igxButton="outlined" (click)="requestBooking(timeslot)" [disabled]="!timeslot.isAvailable || timeslot.isInPast">
         {{ timeslot.slot.toString() | date: "HH:mm" }}
       </button>
     </div> 

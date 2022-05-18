@@ -70,6 +70,8 @@ export class DateSlotsComponent implements OnInit {
         .local()
         .toDate();
 
+        t.isInPast = dateTimeObj.getTime() < Date.now();
+
       const bodyObject: BookingQuery = {
         BusinessId: this.currentBusinessId.toString(),
         BookingDateTime: dateTimeObj,
@@ -161,7 +163,7 @@ export class DateSlotsComponent implements OnInit {
     var timeStops = [];
 
     while (startTime <= endTime) {
-      const timeStop =  { slot: moment(startTime), isAvailable: true };
+      const timeStop =  { slot: moment(startTime), isAvailable: true};
       timeStops.push(timeStop);
       startTime.add(interval, 'hours');
       var clone = startTime.clone();
