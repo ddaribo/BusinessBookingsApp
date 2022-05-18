@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApplication1BusinessBookingsAppV2.Data;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApplication1BusinessBookingsAppV2.Data.Models;
 using WebApplication1BusinessBookingsAppV2.Features.Businesses;
 using WebApplication1BusinessBookingsAppV2.Infrastructure;
@@ -45,7 +39,7 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("my")]
         public async Task<IEnumerable<BusinessViewModel>> MyBusiness()
         {
             var userId = this.User.GetId();
@@ -53,7 +47,13 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
             return await this._businessService.MyBusinesses(userId);
         }
 
-        [Authorize]
+
+        [HttpGet]
+        public async Task<IEnumerable<BusinessViewModel>> AllBusinesses()
+        {
+            return await this._businessService.GetAllBusinesses();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<BusinessViewModel>> Details(int id)
         {

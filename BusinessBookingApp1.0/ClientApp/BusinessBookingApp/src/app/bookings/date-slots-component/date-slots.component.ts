@@ -132,7 +132,9 @@ export class DateSlotsComponent implements OnInit {
     bookingDateTime: dateTimeObj,
   };
 
-    this.bookingsService.createBooking(bodyObject).subscribe(
+  console.log(bodyObject);
+
+    this.bookingsService.createBooking(bodyObject).pipe(take(1)).subscribe(
         (result) => {
           console.log(result);
           this.timeslot = null;

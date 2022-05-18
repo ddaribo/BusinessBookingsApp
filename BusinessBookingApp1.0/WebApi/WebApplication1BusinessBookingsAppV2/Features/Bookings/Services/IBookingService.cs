@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using WebApplication1BusinessBookingsAppV2.Models.Businesses;
 
 namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
 {
@@ -24,5 +25,7 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
         public Task<bool> DeleteBooking(int businessId, string userId);
         [OperationContract]
         public BookingsViewModel GetBookingsByBusinessAndSlot(int businessId, DateTime date);
+
+        public Task<string> BookingsEmailServiceRequest(string mail, CreateBookingRequest model);
     }
 }

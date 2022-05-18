@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WebApplication1BusinessBookingsAppV2.Data;
 using WebApplication1BusinessBookingsAppV2.Data.Models;
@@ -72,7 +73,7 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
                     WorkHoursStart = b.WorkHoursStart,
                     WorkHoursEnd= b.WorkHoursEnd,
                     TimeSlotLength= b.TimeSlotLength,
-                    UserName= b.UserId,
+                    UserId= b.UserId,
                 })
                 .ToListAsync();
         }
@@ -124,5 +125,23 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
             return true;
         }
 
+        public async Task<IEnumerable<BusinessViewModel>> GetAllBusinesses()
+        {
+            return await this._context
+             .Businesses
+             .Where(b => b.IsRemovedByOwner == false || b.IsRemovedByOwner == null)
+             .Select(b => new BusinessViewModel()
+             {
+                 BusinessId = b.BusinessId,
+                 Name = b.Name,
+                 Address = b.Address,
+                 ImageUrl = b.ImageUrl,
+                 WorkHoursStart = b.WorkHoursStart,
+                 WorkHoursEnd = b.WorkHoursEnd,
+                 TimeSlotLength = b.TimeSlotLength,
+                 UserName = b.UserId,
+             })
+             .ToListAsync();
+        }
     }
 }

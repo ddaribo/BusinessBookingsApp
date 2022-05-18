@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WebApplication1BusinessBookingsAppV2.Data.Models;
 using WebApplication1BusinessBookingsAppV2.Features.Bookings;
 using WebApplication1BusinessBookingsAppV2.Features.Businesses;
+using WebApplication1BusinessBookingsAppV2.Features.Identity;
 using WebApplication1BusinessBookingsAppV2.Infrastructure;
 using WebApplication1BusinessBookingsAppV2.Models.Businesses;
 
@@ -15,26 +18,41 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
     public class BookingsController : ApiController
     {
         private readonly IBookingService _bookingsService;
+        private readonly IIdentityService _identityService;
 
-        public BookingsController(IBookingService bookingsService)
+        public BookingsController(
+            IBookingService bookingsService,
+            IIdentityService identityService
+        )
         {
             _bookingsService = bookingsService;
+            _identityService = identityService;
         }
 
         [Authorize]
         [HttpPost("create")]
-        public async Task<ActionResult<IEnumerable<Business>>> Create(CreateBookingRequest model)
+        public async Task<ActionResult<object>> Create(CreateBookingRequest model)
         {
+            // do not allow making a booking in the past
+            if(model.BookingDateTime.ToLocalTime() < DateTime.UtcNow)
+            {
+                return BadRequest();
+            }
+
             var userId = this.User.GetId();
+            var userMail = this._identityService.GetUserById(userId).Email;
+            Console.WriteLine("here");
 
             var id = await this._bookingsService.Create(
                 model.BusinessId,
-                model.BookingDateTime.ToLocalTime(),    // !!
+                model.BookingDateTime.ToLocalTime(),
                 model.Notes,
                 userId
             );
 
-            return Created(nameof(this.Create), id);
+            var res = await this._bookingsService.BookingsEmailServiceRequest(userMail, model);
+
+            return Created(nameof(this.Create), new { id =  id, res = res });
         }
 
         [HttpGet]
@@ -74,20 +92,25 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BookingsViewModel>> Details(int id)
         {
-            var business = await this._bookingsService.GetBooking(id);
+            var booking = await this._bookingsService.GetBooking(id);
 
-            if (business == null)
+            if (booking == null)
             {
                 return NotFound();
             }
 
-            return business;
+            return booking;
         }
 
-        [Authorize]
+        [Authorize("IsAdminUser")]
         [HttpPut]
         public async Task<ActionResult<BookingsViewModel>> Update(UpdateBookingRequestModel model)
         {
+            if (model.BookingDateTime.ToLocalTime() < DateTime.UtcNow)
+            {
+                return BadRequest();
+            }
+
             var userId = this.User.GetId();
 
             var updated = await this._bookingsService.UpdateBooking(
@@ -104,7 +127,6 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
             return this.Ok();
         }
 
-        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult> Delete(int id)
@@ -115,7 +137,7 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
 
             if (!updated)
             {
-                return BadRequest();
+                return BadRequest("You are not allowed to delete this booking!");
             }
 
             return this.Ok();

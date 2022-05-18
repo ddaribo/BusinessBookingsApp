@@ -2,19 +2,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApplication1BusinessBookingsAppV2.Data;
 using WebApplication1BusinessBookingsAppV2.Data.Models;
+using WebApplication1BusinessBookingsAppV2.Models.Businesses;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
 {
     public class BookingsService : IBookingService
     {
         private readonly BusinessBookingsDbContext _context;
+        private readonly IHttpClientFactory _factory;
 
-        public BookingsService(BusinessBookingsDbContext context)
+        public BookingsService(
+            BusinessBookingsDbContext context,
+            IHttpClientFactory factory
+        )
         {
             _context = context;
+            _factory = factory;
         }
 
         public async Task<int> Create(int businessId, DateTime bookingDateTime, string notes, string userId)
@@ -70,36 +80,19 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
         }
 
 
-        public async Task<bool> UpdateBusiness(int id, string name, string address, string imageUrl, string userId)
-        {
-            var business = await this._context
-                .Businesses.Where(b => b.BusinessId == id && b.UserId == userId)
-                .FirstOrDefaultAsync();
-
-            if (business == null)
-            {
-                return false;
-            }
-
-            business.Name = name;
-            business.Address = address;
-            business.ImageUrl = imageUrl;
-
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
-
         public async Task<bool> DeleteBooking(int bookingId, string userId)
         {
             var booking = await this._context
                 .Bookings.Where(b => b.BookingId == bookingId && b.UserId == userId)
                 .FirstOrDefaultAsync();
 
-            if (booking == null)
+            // cannot delete booking later than 5 hours before its due date and time
+
+            if (booking == null || DateTime.Now > booking.BookingDateTime.AddHours(-5))
             {
                 return false;
             }
+          
 
             _context.Remove(booking);
 
@@ -107,6 +100,7 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
 
             return true;
         }
+
 
         public async Task<bool> UpdateBooking(int bookingId, DateTime bookingDateTime, string notes, string userId)
         {
@@ -159,7 +153,7 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
                .ToListAsync();
         }
 
-        public  BookingsViewModel GetBookingsByBusinessAndSlot(int businessId, DateTime date)
+        public BookingsViewModel GetBookingsByBusinessAndSlot(int businessId, DateTime date)
         {
             List<Booking> bookingsForBusiness = _context.Bookings
                .Where(b => b.BusinessId.Equals(businessId))
@@ -184,6 +178,41 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
             d2 = new DateTime(d2.Year, d2.Month, d2.Day, d2.Hour, d2.Minute, 0);
 
             return DateTime.Compare(d1, d2);
+        }
+        public async Task<string> BookingsEmailServiceRequest(string mail, CreateBookingRequest model)
+        {
+            HttpClient httpClient = _factory.CreateClient("emailReminders");
+
+            var business = _context.Businesses.Where(b=> b.BusinessId == model.BusinessId).FirstOrDefault();
+
+            var content = "You have requested a booking for " + business.Name + " on " + model.BookingDateTime.ToString("F") + ".\n";
+            content += "A reminder email will be issued 3 hours before your booking!";
+            if(model.Notes != null && model.Notes != "")
+            {
+                content += "Additional notes to your booking:\n" + model.Notes;
+            }
+
+            var reminderContent = "This is a reminder for your booking for " + business.Name + " on " + model.BookingDateTime.ToString("F") + " (in three hours).\n";
+
+            var bodyObject = new
+            {
+                receiver = mail,
+                content = content,
+                reminderContent = reminderContent,
+                date_issued = DateTime.Now,
+            };
+
+            var bodyObjectJson = new StringContent(
+                JsonSerializer.Serialize(bodyObject),
+                Encoding.UTF8,
+                Application.Json
+            );
+
+            var response = await httpClient.PostAsync("email", bodyObjectJson);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

@@ -8,6 +8,8 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
     public interface IBusinessService
     {
         [OperationContract]
+        public Task<IEnumerable<BusinessViewModel>> GetAllBusinesses();
+        [OperationContract]
         public Task<int> Create(
             string name,
             string address,

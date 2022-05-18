@@ -10,5 +10,6 @@ namespace WebApplication1BusinessBookingsAppV2.Infrastructure
                 .Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
                 .Value;
+
     }
 }

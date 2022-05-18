@@ -88,12 +88,14 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var encryptedToken = this._identityService.GenerateJwtToken(
                 user.Id, 
-                user.UserName, 
+                user.UserName,
+                user.Email,
                 this._appSettings.Secret);
 
             return new LoginResponseModel
             {
-                Token = encryptedToken
+                Token = encryptedToken,
+                UserId = user.Id
             };
         }
     }

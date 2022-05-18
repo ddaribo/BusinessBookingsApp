@@ -29,9 +29,11 @@ namespace WebApplication1BusinessBookingsAppV2
                 options.UseSqlServer(
                     Configuration.GetDefaultConnectionString()))
                 .AddIdentity()
+                .AddJwtAuthentication(appSettings)
+                .AddCustomAuthorizationPolicies(appSettings)
                 .AddSoapCore()
                 .AddApplicationServices()
-                .AddJwtAuthentication(appSettings)
+                .AddEmailRemindersExternalService()
                 .AddSwagger()
                 .AddControllers();
         }
