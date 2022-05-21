@@ -54,7 +54,7 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
 
         [HttpPost]
         [Route(nameof(Login))]
-        public async Task<ActionResult<object>> Login(LoginRequestModel model)
+        public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel model)
         {
             var user = await this._userManager.FindByNameAsync(model.UserName);
 

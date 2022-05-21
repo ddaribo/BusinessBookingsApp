@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -88,12 +89,11 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
 
             // cannot delete booking later than 5 hours before its due date and time
 
-            if (booking == null || DateTime.Now > booking.BookingDateTime.AddHours(-5))
+            if (booking == null || DateTime.Now.ToLocalTime() > booking.BookingDateTime.ToLocalTime().AddHours(-5))
             {
                 return false;
             }
           
-
             _context.Remove(booking);
 
             await _context.SaveChangesAsync();
@@ -185,7 +185,7 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
 
             var business = _context.Businesses.Where(b=> b.BusinessId == model.BusinessId).FirstOrDefault();
 
-            var content = "You have requested a booking for " + business.Name + " on " + model.BookingDateTime.ToString("F") + ".\n";
+            var content = "You have requested a booking for " + business.Name + " on " + model.BookingDateTime.ToLocalTime().ToString("F") + ".\n";
             content += "A reminder email will be issued 3 hours before your booking!";
             if(model.Notes != null && model.Notes != "")
             {
@@ -199,8 +199,10 @@ namespace WebApplication1BusinessBookingsAppV2.Features.Businesses
                 receiver = mail,
                 content = content,
                 reminderContent = reminderContent,
-                date_issued = DateTime.Now,
+                booking_time = model.BookingDateTime.ToLocalTime(),
             };
+
+            Debug.WriteLine(bodyObject.booking_time);
 
             var bodyObjectJson = new StringContent(
                 JsonSerializer.Serialize(bodyObject),

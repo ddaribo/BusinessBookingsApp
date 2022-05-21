@@ -32,9 +32,9 @@ namespace WebApplication1BusinessBookingsAppV2
                 .AddJwtAuthentication(appSettings)
                 .AddCustomAuthorizationPolicies(appSettings)
                 .AddSoapCore()
+                .AddSwagger()
                 .AddApplicationServices()
                 .AddEmailRemindersExternalService()
-                .AddSwagger()
                 .AddControllers();
         }
 
@@ -75,8 +75,8 @@ namespace WebApplication1BusinessBookingsAppV2
 
             app.UseEndpoints(endpoints =>
             {  
-                endpoints.UseSoapEndpoint<BusinessService>("/BusinessService.asmx", new SoapEncoderOptions(), SoapSerializer.DataContractSerializer);
-                endpoints.UseSoapEndpoint<BookingsService>("/BookingsService.asmx", new SoapEncoderOptions(), SoapSerializer.DataContractSerializer);
+                endpoints.UseSoapEndpoint<IBusinessService>("/BusinessService.asmx", new SoapEncoderOptions(), SoapSerializer.DataContractSerializer);
+                endpoints.UseSoapEndpoint<IBookingService>("/BookingsService.asmx", new SoapEncoderOptions(), SoapSerializer.DataContractSerializer);
             });
 
             app.ApplyMigrations();

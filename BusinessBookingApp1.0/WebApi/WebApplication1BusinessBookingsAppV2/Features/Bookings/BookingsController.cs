@@ -36,12 +36,11 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
             // do not allow making a booking in the past
             if(model.BookingDateTime.ToLocalTime() < DateTime.UtcNow)
             {
-                return BadRequest();
+                return BadRequest("Sorry, bookings cannot make be requested for a past time!");
             }
 
             var userId = this.User.GetId();
             var userMail = this._identityService.GetUserById(userId).Email;
-            Console.WriteLine("here");
 
             var id = await this._bookingsService.Create(
                 model.BusinessId,
@@ -70,10 +69,10 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
             return await this._bookingsService.MyBookings(userId);
         }
 
-        [HttpPost("byBusiness/{id}")]
-        public async Task<IEnumerable<BookingsViewModel>> BookingsByBusiness(int businessId)
+        [HttpGet("byBusiness/{id}")]
+        public async Task<IEnumerable<BookingsViewModel>> BookingsByBusiness(int id)
         {
-            return await this._bookingsService.GetBookingsByBusiness(businessId);
+            return await this._bookingsService.GetBookingsByBusiness(id);
         }
 
         [HttpPost("byBusinessAndSlot")]
@@ -96,7 +95,7 @@ namespace WebApplication1BusinessBookingsAppV2.Controllers
 
             if (booking == null)
             {
-                return NotFound();
+                return NotFound("No such booking exists!");
             }
 
             return booking;

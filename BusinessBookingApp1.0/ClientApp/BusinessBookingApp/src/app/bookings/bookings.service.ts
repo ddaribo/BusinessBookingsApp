@@ -37,7 +37,7 @@ export class BookingsService {
   }
 
   public getBookingsByBusiness(id: number): Observable<any[]> {
-    return this.http.post<any[]>(this.getByBusinessPath + id, id);
+    return this.http.get<any[]>(this.getByBusinessPath + id);
   }
 
   public createBooking(postData: any):Observable<any> {
