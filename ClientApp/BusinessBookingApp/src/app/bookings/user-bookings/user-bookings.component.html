@@ -3,7 +3,7 @@
 <igx-list #bookingsList>
     <igx-list-item *ngFor="let booking of userBookingsRev; let i = index;">
         <h4 igxListLineTitle><span style="margin: 20px;"><b>{{i}}</b></span>  <span *ngIf="booking.business">{{booking.business.name}}</span></h4>
-        <p igxListLineSubTitle>{{ booking.bookingDateTime | date }}</p>
+        <p igxListLineSubTitle>{{ booking.bookingDateTime | date }} {{ booking.bookingDateTime | date:'shortTime' }}</p>
         <igx-suffix >
             <igx-icon (click)="requestDelete(booking)">delete</igx-icon>
         </igx-suffix>
